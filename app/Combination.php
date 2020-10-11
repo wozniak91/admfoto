@@ -10,7 +10,7 @@ class Combination extends Model
     protected $fillable = ['price'];
     public $timestamps = false;
     
-    public function attributes()
+    public function options()
     {
         return $this->belongsToMany(Attribute::class, 'combination_has_attributes');
     }

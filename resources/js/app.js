@@ -1,16 +1,25 @@
 import Vue from 'vue';
 import App from './components/App';
 import router from './router';
-import VueLodash from 'vue-lodash';
+// import VueLodash from 'vue-lodash';
 import {VueMasonryPlugin} from 'vue-masonry';
 import Meta from 'vue-meta';
 import VueSilentbox from 'vue-silentbox';
 import NProgress from 'nprogress';
+import VueLazyload from 'vue-lazyload';
 
-Vue.use(VueLodash);
+// import {Workbox} from 'workbox-window';
+
+// if ('serviceWorker' in navigator) {
+//   const wb = new Workbox('/service-worker.js');
+//   wb.register();
+// }
+
+// Vue.use(VueLodash);
 Vue.use(VueMasonryPlugin);
 Vue.use(Meta);
 Vue.use(VueSilentbox);
+Vue.use(VueLazyload);
 
 Vue.config.productionTip = false
 

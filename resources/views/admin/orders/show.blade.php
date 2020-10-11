@@ -22,25 +22,37 @@
 					{{ __('Dane kontaktowe') }}
 				</h3>
 			</div>
-	  	<div class="card-body">
-	  		<table class="table">
-	            <tbody class="table-body">
-	                
-	                <tr class="table-row">
-		                <td class="table-col">Imię i nazwisko</td>
-		                <td class="table-col">{{ $order->firstname.' '.$order->lastname }}</td>
-	                </tr>
-	                <tr class="table-row">
-		                <td class="table-col">E-mail</td>
-		                <td class="table-col">{{ $order->email }}</td>
-	                </tr>
-			            <tr class="table-row">
-		                <td class="table-col">Numer telefonu</td>
-		                <td class="table-col">{{ $order->phone_number }}</td>
-	                </tr>
-	            </tbody>
-	  		</table>	
-	  	</div>
+			<div class="card-body">
+				<table class="table">
+					<tbody class="table-body">
+						
+						<tr class="table-row">
+							<td class="table-col">Imię i nazwisko</td>
+							<td class="table-col">{{ $order->firstname.' '.$order->lastname }}</td>
+						</tr>
+						<tr class="table-row">
+							<td class="table-col">E-mail</td>
+							<td class="table-col">{{ $order->email }}</td>
+						</tr>
+							<tr class="table-row">
+							<td class="table-col">Numer telefonu</td>
+							<td class="table-col">{{ $order->phone_number }}</td>
+						</tr>
+						<tr class="table-row">
+							<td class="table-col">Ulica</td>
+							<td class="table-col">{{ $order->address->street.' '.$order->address->home_number. ' '.$order->address->flat_number }}</td>
+						</tr>
+						<tr class="table-row">
+							<td class="table-col">Miasto</td>
+							<td class="table-col">{{ $order->address->city }}</td>
+						</tr>
+							<tr class="table-row">
+							<td class="table-col">Kod pocztowy</td>
+							<td class="table-col">{{ $order->address->post_code }}</td>
+						</tr>
+					</tbody>
+				</table>	
+			</div>
 	  </article>
 	</div>
   	<div class="col-6">
@@ -50,6 +62,16 @@
 		</div>
 
 	  	<div class="card-body">
+
+				<h4 class="card-title">Rodzaj płatności:</h4>
+				<p class="lead">
+					@if ($order->payment_id == 1)
+						Płatność przy odbiorze
+					@else
+						Przedpłata na konto
+					@endif
+				</p>
+
 				{!! Form::model($order, ['method' => 'PATCH', 'action'=> ['OrdersController@update', $order->id ], 'class' => 'form']) !!}
 					<div class="form-group">
 						{!! Form::select('status_id', ['1' => 'Nowe zamówienie', '2' => 'W realizacji', '3' => 'Wykonane'], $order->status_id, ['class' => 'form-control']) !!}
@@ -70,7 +92,10 @@
 
 <div class="card">
 	<div class="card-body">
-  		<h1 class="card-title">Zdjęcia <small>({{ count($images) }})</small></h1>
+  		<h1 class="card-title">
+		  Zdjęcia <small>({{ count($images) }})</small>
+		<a href="{{ route('download',['order_id' => $order->id ]) }}" class="btn btn-secondary text-right" >Pobierz zamówienie</a>
+		</h1>
     </div>
 </div>
 
@@ -78,10 +103,10 @@
 	@foreach ($images as $image)
 	<div class="col-3">
 		<div class="card">
-			<img src="{{ '/storage/images/orders/'.$order->id.'/'.$image->name }}" class="card-image"/>
+			<img src="{{ '/storage/images/orders/'.$order->id.'/'.$image->image_path }}" class="card-image"/>
 			<div class="card-body">
 
-				@foreach ($image->combination->attributes as $attribute)
+				@foreach ($image->combination->options as $attribute)
 
 				<p class="card-text">{{ $attribute->value }}</p>
 

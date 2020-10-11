@@ -1,0 +1,24 @@
+{
+    "short_name": "FotoAdamski",
+    "name": "FotoAdamski | Fotografia i filmowanie ślubne - Kępno",
+    "description": "Szukasz fotografa bądź kamarzysty w okolicach Kępna? Świetnie trafiłeś!",
+    "icons": [
+        {
+            "src": "/img/icons/icons-192.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "FotoAdamski"
+        },
+        {
+            "src": "/img/icons/icons-512.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "FotoAdamski"
+        }
+    ],
+    "start_url": "/?source=pwa",
+    "background_color": "#FFFFFF",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#000000"
+}

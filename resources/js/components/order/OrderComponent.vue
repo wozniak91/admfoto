@@ -16,7 +16,7 @@
 								<span class="image-select__text">Przeciągnij i upuść zdjęcia</span>
 								<input type="file" class="form-images-control" 
 									accept="image/x-png,image/png,image/jpeg,image/jpg" 
-									@change="addImage" multiple required>
+									@change="addImage" multiple>
 							</div>
 							<transition name="fade">
 							<aside class="alert alert-danger" v-if="errors.image">
@@ -96,6 +96,28 @@
 									
 							</nav>
 							</transition>
+							<transition name="move">
+							<nav class="toolbar" v-if="showToolbar">
+								<div class="container">
+									<div class="row align-items-center">
+										<div class="col-12 col-md-3" v-for="(option, k) in options" :key="option.id">
+											<div class="form-group">
+												<label :for="option.name" class="label-sm" v-text="option.name"></label>
+												<select :name="option.name" v-model="attributes[k]" class="form-control form-control-sm" :class="{ 'is-invalid': toolbarError }">
+													<option v-for="attribute in option.attributes" :value="attribute.id" v-text="attribute.value"></option>
+												</select>
+											</div>
+										</div>
+										<div class="col-12 col-md-3">
+											<button class="btn btn-secondary" @click.prevent="setSelectedCombination()">Zastosuj do zaznaczonych</button>
+										</div>
+									</div>
+									<transition name="fade">
+									<p class="lead image-alert" v-if="toolbarError">{{ toolbarError }}</p>
+									</transition>
+								</div>
+							</nav>
+							</transition>
 						</fieldset>
 
 						<section class="summary my-4">
@@ -103,14 +125,14 @@
 							<div class="row">
 								<div class="col-md-6">
 
-									<h3 class="heading-middle">Jakie są rodzaje kadrowania?</h3>
-									<p class="lead"><sup>*</sup><span class="font-weight-bold">Bez ramki - </span>jeśli proporcje Twojego zdjęcia są inne niż proporcje odbitki, część obrazu zostanie przycięta.</p>
-									<p class="lead"><sup>*</sup><span class="font-weight-bold">Z ramką - </span>Twoje zdjęcie zostanie skadrowane jak w opcji Bez ramki, przy czym wokół zostanie dodane białe obramowanie o szerokości ok. 4 mm.</p>
-									<p class="lead"><sup>*</sup><span class="font-weight-bold">Pełny kadr - </span>jeśli proporcje Twojego zdjęcia są inne niż proporcje odbitki, z dwóch stron pojawią się białe paski.</p>
+									<h3>Kadrowanie</h3>
+									<p class="lead"><sup>*</sup>Bez ramki - jeśli proporcje Twojego zdjęcia są inne niż proporcje odbitki, część obrazu zostanie przycięta.</p>
+									<p class="lead"><sup>*</sup>Z ramką - Twoje zdjęcie zostanie skadrowane jak w opcji Bez ramki, przy czym wokół zostanie dodane białe obramowanie o szerokości ok. 4 mm.</p>
+									<p class="lead"><sup>*</sup>Pełny kadr - jeśli proporcje Twojego zdjęcia są inne niż proporcje odbitki, z dwóch stron pojawią się białe paski.</p>
 
-									<h3 class="heading-middle">Jakie są rodzaje papieru?</h3>
-									<p class="lead"><sup>*</sup><span class="font-weight-bold">Matowy - </span> papier matowy charakteryzuje się chropowatą, nieregularną strukturą, która idealnie niweluje odbicia światła. Papier matowy jest odporny na zarysowania i nie pozostają na nim odciski palców. Gramatura 215 g/m2.</p>
-									<p class="lead"><sup>*</sup><span class="font-weight-bold">Błyszczący - </span>papier błyszczący wyróżnia charakterystyczna dla niego powierzchnia z połyskiem, która sprawia, że barwy zdjęcia wydają się żywe i czyste. Papier ten posiada nieznacznie większe maksymalne nasycenie barw i głębokość czerni. Gramatura 215 g/m2.</p>
+									<h3>Rodzaje papieru</h3>
+									<p class="lead"><sup>*</sup>Matowy -  papier matowy charakteryzuje się chropowatą, nieregularną strukturą, która idealnie niweluje odbicia światła. Papier matowy jest odporny na zarysowania i nie pozostają na nim odciski palców. Gramatura 215 g/m2.</p>
+									<p class="lead"><sup>*</sup>Błyszczący - papier błyszczący wyróżnia charakterystyczna dla niego powierzchnia z połyskiem, która sprawia, że barwy zdjęcia wydają się żywe i czyste. Papier ten posiada nieznacznie większe maksymalne nasycenie barw i głębokość czerni. Gramatura 215 g/m2.</p>
 
 								</div>
 								<div class="col-md-6">
@@ -147,9 +169,6 @@
 								</div>
 
 							</div>
-
-
-
 						</section>
 
 						<fieldset class="address mt-5">
@@ -201,6 +220,64 @@
 								</div>
 
 							</div>
+							<div class="row">
+								<div class="form-group col-md-6 col-sm-12">
+									<label for="email">Ulica:</label>
+									<input type="text" name="street" class="form-control" placeholder="np. ul. Jana Pawła 3" required
+									v-bind:class="{ 'is-invalid': errors.street }" v-model="fields.street">
+									<transition name="fade">
+										<div v-for="error in errors.street" class="invalid-feedback d-block">
+											{{ error }}
+										</div>
+									</transition>
+								</div>
+								<div class="form-group col-md-6 col-sm-12">
+									<div class="row">
+										<div class="form-group col-md-6 col-sm-12">
+											<label for="home_number">Numer domu:</label>
+											<input type="text" name="home_number" class="form-control" placeholder="np. 7b" required
+											v-bind:class="{ 'is-invalid': errors.home_number }" v-model="fields.home_number">
+											<transition name="fade">
+												<div v-for="error in errors.home_number" class="invalid-feedback d-block">
+													{{ error }}
+												</div>
+											</transition>
+										</div>
+										<div class="form-group col-md-6 col-sm-12">
+											<label for="flat_number">Numer mieszkania:</label>
+											<input type="number" name="flat_number" class="form-control" placeholder="np. 7"
+											v-bind:class="{ 'is-invalid': errors.flat_number }" v-model="fields.flat_number">
+											<transition name="fade">
+												<div v-for="error in errors.flat_number" class="invalid-feedback d-block">
+													{{ error }}
+												</div>
+											</transition>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-md-6 col-sm-12">
+									<label for="postcode">Kod pocztowy:</label>
+									<input type="text" name="postcode" class="form-control" placeholder="np. 55-219" required
+										v-bind:class="{ 'is-invalid': errors.postcode }" v-model="fields.postcode">
+									<transition name="fade">
+									<div v-for="error in errors.postcode" class="invalid-feedback d-block">
+										{{ error }}
+									</div>
+									</transition>
+								</div>
+								<div class="form-group col-md-6 col-sm-12">
+									<label for="city">Miasto:</label>
+									<input type="text" name="city" class="form-control" placeholder="np. Warszawa" required
+										v-bind:class="{ 'is-invalid': errors.city }" v-model="fields.city">
+									<transition name="fade">
+									<div v-for="error in errors.city" class="invalid-feedback d-block">
+										{{ error }}
+									</div>
+									</transition>
+								</div>
+							</div>
 						</fieldset>
 						<div class="form-group mt-3 d-flex align-items-center">
 							<input type="checkbox" class="form-control-checkbox" v-model="fields.cgv" name="cgv" id="cgv" />
@@ -219,10 +296,10 @@
 								3. Wybierz metodę płatności
 							</h3>
 							<transition name="fade">
-							<div class="form-group d-flex align-items-center" v-if="(displayPrice(getTotalPrice(), false, false) <= 200)">
+							<div class="form-group d-flex align-items-center" v-if="(displayPrice(getTotalPrice(), false, false) <= 1000)">
 								<input type="radio" class="form-control-radio" :value="1" name="payment" id="payment_1" v-model="fields.payment_id" />
 								<span class="form-radio"></span>
-								<label for="payment_1">Płatność przy odbiorze</label>
+								<label for="payment_1">W punkcie sprzedaży</label>
 							</div>
 							</transition>
 							<div class="form-group d-flex align-items-center">
@@ -232,13 +309,21 @@
 							</div>
 						</fieldset>
 
-						<div class="d-flex justify-content-end mb-5">
-							<button type="submit" class="btn btn-primary mt-3" v-bind:class="{ 'sending': isSending }">
+						<div class="d-flex justify-content-end mb-5 mt-3">
+							<transition name="fade">
+							<svg v-if="isSending" width="50px"  height="50px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling mr-2">
+								<circle cx="50" cy="50" fill="none" stroke="#000" stroke-width="4" r="35" stroke-dasharray="164.93361431346415 56.97787143782138" transform="rotate(41.7316 50 50)">
+									<animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform>
+								</circle>
+							</svg>
+							</transition>
+							<button type="submit" class="btn btn-primary btn-lg" :disabled="isSending" v-bind:class="{ 'sending': isSending }">
 								Złóż zamówienie
 							</button>
 						</div>
 
 					</form>
+					
 
 		</div>
 
@@ -247,6 +332,7 @@
 
 <script>
 import axios from 'axios';
+import { delay, isEqual } from 'lodash';
 
 export default {
 
@@ -254,23 +340,31 @@ export default {
 
 		return {
 			errors: false,
-			isSending: true,
+			isSending: false,
 			selectImages: false,
 			options: false,
 			default_combination: false,
 			combinations: false,
 			imagesIds: 0,
 			imageToLarge: false,
+			attributes: [],
 			fields: {
 				images: [],
 				firstname: '',
 				lastname: '',
 				email: '',
 				phone_number: '',
+				street: '',
+				home_number: '',
+				flat_number: '',
+				postcode: '',
+				city: '',
 				newsletter: false,
 				cgv: false,
-				payment_id: 2
+				payment_id: 1
 			},
+			showToolbar: false,
+			toolbarError: false,
 		}
 
 	},
@@ -300,7 +394,8 @@ export default {
 				then(resp => resp.data).
 				then(resp => {
 					this.combinations = resp;
-					this.default_combination = this.getDefaultCombination();
+					this.default_combination = Object.assign({}, this.getDefaultCombination());
+					this.attributes = Object.assign([], this.default_combination.attributes);
 				});
 		},
 
@@ -318,13 +413,10 @@ export default {
 		},
 
 		getImagesQty() {
-
 			let totalQty = 0;
-
 			this.fields.images.map(image => {
 				totalQty += parseInt(image.qty);
 			});
-
 			return totalQty;
 		},
 
@@ -332,13 +424,13 @@ export default {
 			const files = e.target.files;
 
 			Array.from(files).forEach(file => {
-				if(file.size < 8000000) {
+				if(file.size < 15000000) {
 					this.errors = false;
 					this.getImageRender(file);
 				} else {
 					this.errors = {
 						image: [
-							'Podane zdjęcie przekracza rozmiar 8Mb'
+							'Podane zdjęcie przekracza rozmiar 15Mb'
 						]
 					};
 				}
@@ -394,14 +486,11 @@ export default {
 		getImageIndexById(id_image) {
 
 			let id = false;
-
 			this.fields.images.map((image, index) => {
-
 				if(image.id == id_image) {
 					return id = index;
 				}
 			});
-
 			return id;
 		},
 
@@ -415,37 +504,47 @@ export default {
 
 		duplicateImage(index) {
 
-			const image = Object.assign({}, this.fields.images[index]);
+			const old_image = this.fields.images[index];
+			const new_image = {
+				id: this.imagesIds += 1,
+				dataImage: old_image.dataImage,
+				selected: old_image.selected,
+				id_combination: old_image.id_combination,
+				attributes: Object.assign([], old_image.attributes),
+				price: old_image.price,
+				qty: old_image.qty,
+				file: old_image.file,
+				name: old_image.name,
+			};
 
-			image.id = this.imagesIds += 1;
-
-			return this.fields.images.push(image);
-	
+			this.fields.images.push(new_image);
 		},
 
 		selectImage(index) {
 
 			const image = this.fields.images[index];
-
 			image.selected = image.selected ? false : true;
-
 		},
 
 		toggleSelectImages(select = true) {
+
+			if(!select)
+				this.showToolbar = false;
 
 			this.fields.images.map(image => {
 				image.selected = select;
 			});
 
+			if(select)
+				this.showToolbar = true;
+
 		},
 
 		duplicateSelectedImages() {
-
 			this.fields.images.map((image, index) => {
-
-					return image.selected ? this.duplicateImage(index) : false;
+				return image.selected ? this.duplicateImage(index) : false;
 			});
-
+			this.checkCombinations();
 		},
 
 		removeSelectedImages() {
@@ -457,14 +556,16 @@ export default {
 
 		},
 
-		changeCombination(image) {
+		changeCombination(image, check_combinations = true) {
 
 			const combination = this.findCombination(image.attributes);
 
 			if(combination) {
 				image.error = false;
 				image.id_combination = combination.id;
-				image.attributes = Object.assign([], combination.attributes);
+
+				if(!isEqual(combination.attributes, image.attributes))
+					image.attributes = Object.assign([], combination.attributes);
 				
 				if(combination.price_rules) {
 
@@ -485,15 +586,17 @@ export default {
 			} else {
 				image.error = 'Wariant niedostępny';
 			}
-			this.checkCombinations();
+			if(check_combinations)
+				this.checkCombinations();
 		},
 
 		checkCombinations() {
 
 			this.fields.images.map(image => {
-				this.changeCombination(image);
+				delay(() => {
+					this.changeCombination(image, false);
+				},0)
 			});
-
 		},
 
 		findCombination(attributes) {
@@ -502,7 +605,7 @@ export default {
 
 			this.combinations.map(combination => {
 
-				if(this._.isEqual(combination.attributes, attributes)) {
+				if(isEqual(combination.attributes, attributes)) {
 					result = Object.assign([], combination);
 				} 
 
@@ -532,6 +635,26 @@ export default {
 			return `${(qty ? price/100*qty : price/100).toFixed(2)}${unit ? ' zł' : ''}`;
 		},
 
+		setSelectedCombination() {
+
+			const combination = this.findCombination(this.attributes);
+
+			if(!combination) {
+				this.toolbarError = "Wariant niedostępny. Wybierz inną opcję";
+			}
+
+			if(combination) {
+				this.toolbarError = false;
+				this.fields.images.map(image => {
+					if(image.selected) {
+						image.attributes = Object.assign([], combination.attributes);
+					}
+				});
+				this.checkCombinations();
+			}
+			
+		},
+
 		getDefaultCombination() {
 
 			let default_combination = false;
@@ -548,6 +671,12 @@ export default {
 
 		},
 
+		getDefaultAttributes() {
+
+			const default_combination = getDefaultCombination();
+			return default_combination.attributes;
+		},
+
 		submitOrder(e) {
 
 			let formData = new FormData();
@@ -559,6 +688,11 @@ export default {
 			formData.append('newsletter', this.fields.newsletter);
 			formData.append('remember_token', token.content);
 			formData.append('payment_id', this.fields.payment_id);
+			formData.append('street', this.fields.street);
+			formData.append('home_number', this.fields.home_number);
+			formData.append('flat_number', this.fields.flat_number);
+			formData.append('city', this.fields.city);
+			formData.append('postcode', this.fields.postcode);
 
 			this.fields.images.map((image, key) => {
 				// formData.append(`image[${key}]`, image.file);
@@ -566,19 +700,23 @@ export default {
 				formData.append(`combination_id[${key}]`, parseInt(image.id_combination));
 				formData.append(`qty[${key}]`, parseInt(image.qty));
 			});
-			this.isSending = true;
-			
-			axios.post(`/api/order/new`, formData)
-				.then(resp => {
-					
-					this.$router.push(`/potwierdzenie/${resp.data.token}`);
 
-				}).catch(err => {
+			if(!this.isSending) {
+				this.isSending = true;
+				axios.post(`/api/order/new`, formData)
+					.then(resp => {
+						this.isSending = false;
+						this.$router.push(`/potwierdzenie/${resp.data.token}`);
 
-					if(err.response.status == 422) {
-					    this.errors = err.response.data.errors;
-					}
+					}).catch(err => {
+						console.log(err);
+						this.isSending = false;
+						if(err.response.status == 422) {
+							this.errors = err.response.data.errors;
+						}
 				});
+			}
+
 
 			},
 

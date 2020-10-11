@@ -1,8 +1,7 @@
 import suneditor from 'suneditor'
 import plugins from 'suneditor/src/plugins'
-// import $ from 'jquery';
+import swal from 'sweetalert';
 
-// window.$ = window.jQuery = $;
 window.axios = require('axios');
 require('bootstrap');
 
@@ -94,14 +93,10 @@ if(sendNewsletter != null) {
         let subscribesData = [];
         let contentData = editor.getContents();
         for (var i = 0; i < subscribes.options.length; i++) {
-        
             if(subscribes.options[i].selected == true ){
               subscribesData.push(subscribes.options[i].value);
             }
-
         }
-        
-
         let dataForm = {
             subscribes: subscribesData,
             content: contentData
@@ -111,8 +106,49 @@ if(sendNewsletter != null) {
             .then(resp => resp.data)
             .then(resp => {
                 console.log(resp);
-            });
-
-
+        });
     });
 }
+
+const destroyButtons = document.querySelectorAll('.js-destroy-order') || [];
+
+
+destroyButtons.forEach(btn => {
+
+    const order_id = btn.dataset.orderId;
+    const wrapper = btn.parentNode.parentNode;
+    const path = btn.href;
+
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        swal("Czy jesteś pewien, że chcesz trwale usunąć zamówienie?", {
+            buttons: {
+                cancel: "Nie",
+                catch: {
+                  text: "Tak",
+                  value: true,
+                }
+            }
+          }).then(status => {
+              
+            if(status) {
+                axios.delete(btn.href, order_id)
+                .then(resp => resp.data)
+                .then(resp => {
+
+                    wrapper.classList.add('table-col--destroyed')
+                    swal("Zamówienie zostało usunięte","", "success")                  
+                    .then(status => {
+                        location.reload();
+                    });
+                }).catch(e => {
+                    swal("Niestety nie udało usunąć się zamówienia","Spóbuj ponownie w późniejszym czasie", "error");
+                });
+
+
+            }
+
+          })
+    });
+})
+

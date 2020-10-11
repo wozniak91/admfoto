@@ -110,8 +110,12 @@ class ImagesGroupsController extends Controller
 
     public function getGroups() {
 
-        $groups = ImagesGroup::get();
+        $groups = ImagesGroup::with('galleries')->get();
         $images = Gallery::with('groups')->get();
+
+        foreach ($groups as $group) {
+            $group->images_nb = count($group->galleries);
+        }
 
         $imagesGroups = [
             'groups' => $groups,

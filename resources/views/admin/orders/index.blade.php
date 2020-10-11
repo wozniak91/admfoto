@@ -23,7 +23,7 @@
                     <th class="table-header--col">Imie i nazwisko</th>
                     <th class="table-header--col">E-mail</th>
                     <th class="table-header--col">Data zamówienia</th>
-                    <th class="table-header--col">Podgląd</th>
+                    <th class="table-header--col">Podgląd / Usuń</th>
                 </thead>
                 
                 <tbody class="table-body">
@@ -33,7 +33,10 @@
                         <td class="table-col">{{ $order->firstname.' '.$order->lastname }}</td>
                         <td class="table-col">{{ $order->email }}</td>
                         <td class="table-col">{{ $order->created_at }}</td>
-                        <td class="table-col"><a href="{{ action('OrdersController@show', $order->id) }}">Zobacz</a></td>
+                        <td class="table-col">
+                            <a href="{{ action('OrdersController@show', $order->id) }}">Zobacz</a>
+                            <a class="js-destroy-order" href="{{ action('OrdersController@destroy', $order->id) }}" data-order-id="{{ $order->id }}">Usuń</a>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

@@ -68,7 +68,7 @@ class GalleriesController extends Controller
             $gallery->image_link = Storage::url('images/gallery/'.$filename);
             $gallery->image_name = $filename;
             $gallery->position = Gallery::count()+1;
-
+            
         }
 
         $gallery->save();

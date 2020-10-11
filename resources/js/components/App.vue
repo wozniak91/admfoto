@@ -22,7 +22,7 @@ export default {
   },
   name: 'App',
   metaInfo: {
-    	title: 'Fotoadamski',
+    	title: 'FotoAdamski',
   }
 }
 </script>

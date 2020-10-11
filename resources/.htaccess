@@ -1,0 +1,4 @@
+AuthName "admin"
+AuthUserFile /home/users/www-admfoto/public_html/web/.htpasswd
+AuthType Basic
+Require valid-user

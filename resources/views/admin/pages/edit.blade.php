@@ -25,6 +25,14 @@
                     {!! Form::label('title', 'Tytuł', ['class' => 'form-label']) !!}
                 </div>
                 <div class="form-group">
+                    {!! Form::text('meta_title', null,['class' => 'form-control', 'required']) !!}
+                    {!! Form::label('meta_title', 'Meta tytuł', ['class' => 'form-label']) !!}
+                </div>
+                <div class="form-group">
+                    {!! Form::text('meta_description', null,['class' => 'form-control', 'required']) !!}
+                    {!! Form::label('meta_description', 'Meta opis', ['class' => 'form-label']) !!}
+                </div>
+                <div class="form-group">
                     {!! Form::textarea('content', null,['class' => 'form-control', 'id' => 'textarea','required']) !!}
                     {!! Form::label('content', 'Treść', ['class' => 'form-label']) !!}
                     

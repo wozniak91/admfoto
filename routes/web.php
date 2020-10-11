@@ -18,6 +18,7 @@ Auth::routes(['verify' => false, 'register' => false]);
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 Route::get('/admin', 'HomeController@index')->name('admin')->middleware('auth');
 Route::resource('/admin/pages', 'PagesController')->middleware('auth');
+Route::get('/admin/orders/download', 'OrdersController@download')->name('download')->middleware('auth');
 Route::resource('/admin/orders', 'OrdersController')->middleware('auth');
 Route::resource('/admin/newsletter', 'NewsletterController')->middleware('auth');
 Route::resource('/admin/settings', 'SettingsController')->middleware('auth');
@@ -28,7 +29,7 @@ Route::resource('/admin/attributes_groups', 'AttributesGroupsController')->middl
 Route::resource('/admin/attributes_groups/attributes', 'AttributesController')->middleware('auth');
 Route::resource('/admin/combinations', 'CombinationsController')->middleware('auth');
 
-Route::resource('/admin/combinations/{id_combination}/price_rule', 'PriceRulesController')->middleware('auth');
+
 
 Route::get('/install', function () {
     Artisan::call('cache:clear');
@@ -37,6 +38,9 @@ Route::get('/install', function () {
     // Artisan::call('storage:link');
 });
 
+Route::get('/dump', function () {
+    Artisan::call('dump-autoload');
+});
 
 Route::get('{path}', function () {
     return view('front.app');

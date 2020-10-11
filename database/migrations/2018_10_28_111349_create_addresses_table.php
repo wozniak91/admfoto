@@ -18,7 +18,7 @@ class CreateAddressesTable extends Migration
             $table->integer('order_id')->unsigned();
             $table->string('street');
             $table->string('home_number');
-            $table->string('flat_number');
+            $table->string('flat_number')->nullable();
             $table->string('post_code');
             $table->string('city');
             $table->string('phone_number');

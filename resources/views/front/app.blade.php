@@ -6,16 +6,17 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#000000" />
     <title>{{ config('app.name', 'Laravel') }}</title>
+    <link rel="manifest" href="/manifest.json">
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Fonts -->
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    {{-- <link rel="dns-prefetch" href="https://fonts.gstatic.com"> --}}
 {{--     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700&amp;subset=latin-ext" rel="stylesheet" type="text/css"> --}}
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet" type="text/css">
     
 
     <!-- Styles -->

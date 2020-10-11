@@ -118,7 +118,7 @@ class CombinationsController extends Controller
     {
         $combination = Combination::findOrFail($id);
 
-        $combination->attributes()->detach();
+        $combination->options()->detach();
         $combination->delete();
 
         return redirect('/admin/combinations')->with('success', 'Kombinacja została pomyślnie usunięta.');
@@ -126,14 +126,14 @@ class CombinationsController extends Controller
 
     public function getCombinations()
     {
-        $combinations = Combination::with('attributes', 'priceRules')->get();
+        $combinations = Combination::with('options', 'priceRules')->get();
 
         foreach ($combinations as $combination) {
             
             $options = [];
             $rules = count($combination->priceRules) > 0 ? [] : false;
 
-            foreach ($combination->attributes as $attribute) {
+            foreach ($combination->options as $attribute) {
                 $options[] = $attribute->id;
             }
 
@@ -144,8 +144,8 @@ class CombinationsController extends Controller
                     'price' => $rule->price
                 ];
             }
-            unset($combination->attributes);
             unset($combination->priceRules);
+            
             $combination->attributes = $options;
             $combination->price_rules = $rules;
         }

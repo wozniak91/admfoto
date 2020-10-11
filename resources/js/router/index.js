@@ -1,9 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './../components/HomeComponent';
-import Page from './../components/PageComponent';
-import Order from './../components/Order/OrderComponent';
-import OrderConfirmation from './../components/Order/OrderConfirmationComponent';
 
 Vue.use(Router)
 
@@ -12,27 +9,27 @@ export default new Router({
 	linkActiveClass: 'active',
 		routes: [
 		{
-			path: '',
+			path: '/',
 			name: 'home',
 			component: Home,
 			meta: {
-				title: 'FotoAdamski - Fotografia ślubna'
+				title: 'FotoAdamski'
 			}
 		},
 		{
 			path: '/potwierdzenie/:token',
 			name: 'confirm',
-			component: OrderConfirmation
+			component: () => import('./../components/Order/OrderConfirmationComponent')
 		},
 		{
 			path: '/:id-:title',
 			name: 'page',
-			component: Page
+			component: () => import('./../components/PageComponent')
 		},
 		{
 			path: '/zamowienie',
 			name: 'order',
-			component: Order
+			component: () => import('./../components/Order/OrderComponent')
 		},
 	],
 	scrollBehavior (to, from, savedPosition) {

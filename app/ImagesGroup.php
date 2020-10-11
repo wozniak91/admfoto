@@ -10,6 +10,6 @@ class ImagesGroup extends Model
 
     public function galleries()
     {
-        return $this->belongsToMany(Gallery::class);
+        return $this->belongsToMany(Gallery::class, 'gallery_has_groups');
     }
 }
