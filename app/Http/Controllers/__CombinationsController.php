@@ -54,7 +54,7 @@ class CombinationsController extends Controller
 
         $combination->save();
 
-        $combination->options()->attach($request->input('attributes'));
+        $combination->attributes()->attach($request->input('attributes'));
 
         return redirect('/admin/combinations')->with('success', 'Nowa kombinacja została pomyślnie dodana.');
     }
@@ -134,7 +134,7 @@ class CombinationsController extends Controller
             $rules = count($combination->priceRules) > 0 ? [] : false;
 
             foreach ($combination->options as $attribute) {
-                $options[$attribute->attributes_group_id] = $attribute->id;
+                $options[] = $attribute->id;
             }
 
             foreach ($combination->priceRules as $rule) {
@@ -151,10 +151,5 @@ class CombinationsController extends Controller
         }
 
         return $combinations;
-    }
-
-    public function getAllCombinations()
-    {
-        return Combination::with('options', 'priceRules')->get();
     }
 }

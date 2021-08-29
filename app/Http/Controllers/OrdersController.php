@@ -211,7 +211,7 @@ class OrdersController extends Controller
     public function storeImage(Request $request)
     {
         $this->validate($request, [
-            'image' => 'image|required|mimes:jpeg,png,jpg|max:15360',
+            'image' => 'required|mimes:jpeg,png,jpg|max:15360',
         ]);
 
         $file = $request->file('image');

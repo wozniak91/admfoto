@@ -15,6 +15,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var heic2any__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! heic2any */ "./node_modules/heic2any/dist/heic2any.js");
+/* harmony import */ var heic2any__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(heic2any__WEBPACK_IMPORTED_MODULE_3__);
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
@@ -383,6 +385,230 @@ function _asyncToGenerator(fn) {
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -390,6 +616,9 @@ function _asyncToGenerator(fn) {
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      pending: false,
+      totalToUpload: 0,
+      totalUploaded: 0,
       errors: false,
       isSending: false,
       selectImages: false,
@@ -401,15 +630,15 @@ function _asyncToGenerator(fn) {
       attributes: [],
       fields: {
         images: [],
-        firstname: '',
-        lastname: '',
-        email: '',
-        phone_number: '',
-        street: '',
-        home_number: '',
-        flat_number: '',
-        postcode: '',
-        city: '',
+        firstname: "",
+        lastname: "",
+        email: "",
+        phone_number: "",
+        street: "",
+        home_number: "",
+        flat_number: "",
+        postcode: "",
+        city: "",
         newsletter: false,
         cgv: false,
         payment_id: 1
@@ -431,7 +660,7 @@ function _asyncToGenerator(fn) {
     getOptions: function getOptions() {
       var _this = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_1___default()('/api/options').then(function (resp) {
+      axios__WEBPACK_IMPORTED_MODULE_1___default()("/api/options").then(function (resp) {
         return resp.data;
       }).then(function (resp) {
         _this.options = resp;
@@ -440,12 +669,12 @@ function _asyncToGenerator(fn) {
     getCombinations: function getCombinations() {
       var _this2 = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_1___default()('/api/combinations').then(function (resp) {
+      axios__WEBPACK_IMPORTED_MODULE_1___default()("/api/combinations").then(function (resp) {
         return resp.data;
       }).then(function (resp) {
         _this2.combinations = resp;
         _this2.default_combination = Object.assign({}, _this2.getDefaultCombination());
-        _this2.attributes = Object.assign([], _this2.default_combination.attributes);
+        _this2.attributes = Object.assign({}, _this2.default_combination.attributes);
       });
     },
     getTotalPrice: function getTotalPrice() {
@@ -463,57 +692,40 @@ function _asyncToGenerator(fn) {
       });
       return totalQty;
     },
-    addImage: function addImage(e) {
-      var _this3 = this;
-
-      var files = e.target.files;
-      Array.from(files).forEach(function (file) {
-        if (file.size < 15000000) {
-          _this3.errors = false;
-
-          _this3.getImageRender(file);
-        } else {
-          _this3.errors = {
-            image: ['Podane zdjęcie przekracza rozmiar 15Mb']
-          };
-        }
-      });
-    },
-    getImageRender: function () {
-      var _getImageRender = _asyncToGenerator(
+    addImages: function () {
+      var _addImages = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(file) {
-        var _this4 = this;
-
-        var reader, image;
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(e) {
+        var files, i, file;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                reader = new FileReader();
-                reader.readAsDataURL(file);
-                image = {
-                  id: this.imagesIds += 1,
-                  dataImage: false,
-                  selected: false,
-                  id_combination: this.default_combination.id,
-                  attributes: Object.assign([], this.default_combination.attributes),
-                  price: this.default_combination.price,
-                  qty: 1,
-                  file: file,
-                  name: false
-                };
-                this.imageUpload(image);
-
-                reader.onloadend = function () {
-                  image.dataImage = reader.result;
-
-                  _this4.fields.images.push(image);
-
-                  _this4.checkCombinations();
-                };
+                files = e.target.files;
+                this.totalToUpload = files.length;
+                this.totalUploaded = 0;
+                this.pending = true;
+                i = 0;
 
               case 5:
+                if (!(i < files.length)) {
+                  _context.next = 12;
+                  break;
+                }
+
+                file = files[i];
+                _context.next = 9;
+                return this.uploadImage(file);
+
+              case 9:
+                i++;
+                _context.next = 5;
+                break;
+
+              case 12:
+                this.pending = false;
+
+              case 13:
               case "end":
                 return _context.stop();
             }
@@ -521,49 +733,167 @@ function _asyncToGenerator(fn) {
         }, _callee, this);
       }));
 
-      function getImageRender(_x) {
-        return _getImageRender.apply(this, arguments);
+      function addImages(_x) {
+        return _addImages.apply(this, arguments);
       }
 
-      return getImageRender;
+      return addImages;
     }(),
-    imageUpload: function () {
-      var _imageUpload = _asyncToGenerator(
+    convert: function convert(file) {
+      return new Promise(function (resolve, reject) {
+        file.arrayBuffer().then(
+        /*#__PURE__*/
+        function () {
+          var _ref = _asyncToGenerator(
+          /*#__PURE__*/
+          _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(arrayBuffer) {
+            var blob, conversionResult;
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+              while (1) {
+                switch (_context2.prev = _context2.next) {
+                  case 0:
+                    blob = new Blob([new Uint8Array(arrayBuffer)], {
+                      type: file.type
+                    });
+                    _context2.next = 3;
+                    return heic2any__WEBPACK_IMPORTED_MODULE_3___default()({
+                      blob: blob,
+                      toType: "image/jpeg",
+                      quality: 1
+                    });
+
+                  case 3:
+                    conversionResult = _context2.sent;
+                    resolve(conversionResult);
+
+                  case 5:
+                  case "end":
+                    return _context2.stop();
+                }
+              }
+            }, _callee2, this);
+          }));
+
+          return function (_x2) {
+            return _ref.apply(this, arguments);
+          };
+        }());
+      });
+    },
+    uploadImage: function () {
+      var _uploadImage = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(image) {
-        var _this5 = this;
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(file) {
+        var _this3 = this;
 
-        var formData;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+        var fileName, blob, _fileName, formData, image;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
-                if (!image.name) {
-                  formData = new FormData();
-                  formData.append("image", image.file);
-                  axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/api/order/image", formData).then(function (resp) {
-                    image.name = resp.data;
-                  }).catch(function (err) {
-                    _this5.removeImage(image.id);
+                fileName = file.name.toLowerCase();
 
-                    _this5.errors = err.response.data.errors;
-                  });
+                if (!fileName.includes('heic')) {
+                  _context3.next = 7;
+                  break;
                 }
 
-              case 1:
+                _context3.next = 4;
+                return this.convert(file);
+
+              case 4:
+                blob = _context3.sent;
+                _fileName = new Date().getTime() + ".jpeg";
+                file = new File([blob], _fileName, {
+                  type: "image/jpeg",
+                  lastModified: Date.now()
+                });
+
+              case 7:
+                formData = new FormData();
+                formData.append("image", file);
+                image = {
+                  id: this.imagesIds += 1,
+                  selected: false,
+                  id_combination: this.default_combination.id,
+                  attributes: Object.assign({}, this.default_combination.attributes),
+                  price: this.default_combination.price,
+                  qty: 1,
+                  file: file,
+                  errors: false
+                };
+                _context3.next = 12;
+                return this.readFile(file);
+
+              case 12:
+                image.dataImage = _context3.sent;
+                _context3.next = 15;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/api/order/image", formData).then(function (resp) {
+                  image.name = resp.data;
+                  _this3.totalUploaded += 1;
+
+                  _this3.fields.images.push(image);
+
+                  _this3.checkCombinations();
+                }).catch(function (err) {
+                  _this3.$notify({
+                    group: "notify",
+                    type: "error",
+                    title: file.name,
+                    duration: 40000,
+                    text: err.response.data.message
+                  });
+                });
+
+              case 15:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee3, this);
       }));
 
-      function imageUpload(_x2) {
-        return _imageUpload.apply(this, arguments);
+      function uploadImage(_x3) {
+        return _uploadImage.apply(this, arguments);
       }
 
-      return imageUpload;
+      return uploadImage;
     }(),
+    readFile: function readFile(file) {
+      var readAs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'DataURL';
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+
+        reader.onload = function () {
+          resolve(reader.result);
+        };
+
+        reader.onerror = reject;
+
+        switch (readAs) {
+          case 'DataURL':
+            reader.readAsDataURL(file);
+            break;
+
+          case 'ArrayBuffer':
+            reader.readAsArrayBuffer(file);
+            break;
+
+          case 'BinaryString':
+            reader.readAsBinaryString(file);
+            break;
+
+          case 'Text':
+            reader.readAsText(file);
+            break;
+
+          default:
+            reject('Incorent read as prop');
+            break;
+        }
+      });
+    },
     getImageIndexById: function getImageIndexById(id_image) {
       var id = false;
       this.fields.images.map(function (image, index) {
@@ -607,18 +937,18 @@ function _asyncToGenerator(fn) {
       if (select) this.showToolbar = true;
     },
     duplicateSelectedImages: function duplicateSelectedImages() {
-      var _this6 = this;
+      var _this4 = this;
 
       this.fields.images.map(function (image, index) {
-        return image.selected ? _this6.duplicateImage(index) : false;
+        return image.selected ? _this4.duplicateImage(index) : false;
       });
       this.checkCombinations();
     },
     removeSelectedImages: function removeSelectedImages() {
-      var _this7 = this;
+      var _this5 = this;
 
       this.fields.images.map(function (image) {
-        return image.selected ? _this7.removeImage(image.id) : false;
+        return image.selected ? _this5.removeImage(image.id) : false;
       });
       this.checkCombinations();
     },
@@ -646,28 +976,38 @@ function _asyncToGenerator(fn) {
           image.price = combination.price;
         }
       } else {
-        image.error = 'Wariant niedostępny';
+        image.error = "Wariant niedostępny";
       }
 
       if (check_combinations) this.checkCombinations();
     },
     checkCombinations: function checkCombinations() {
-      var _this8 = this;
+      var _this6 = this;
 
       this.fields.images.map(function (image) {
         Object(lodash__WEBPACK_IMPORTED_MODULE_2__["delay"])(function () {
-          _this8.changeCombination(image, false);
+          _this6.changeCombination(image, false);
         }, 0);
       });
     },
     findCombination: function findCombination(attributes) {
       var result = false;
+      var selected_attributes = Object.assign([], attributes);
+      selected_attributes = selected_attributes.join('-');
       this.combinations.map(function (combination) {
-        if (Object(lodash__WEBPACK_IMPORTED_MODULE_2__["isEqual"])(combination.attributes, attributes)) {
-          result = Object.assign([], combination);
+        var combination_attributes = Object.assign([], combination.attributes);
+        combination_attributes = combination_attributes.join('-');
+
+        if (combination_attributes == selected_attributes) {
+          result = Object.assign({}, combination);
         }
       });
       return result;
+    },
+    sortArray: function sortArray(arr) {
+      return arr.sort(function (a, b) {
+        return a - b;
+      });
     },
     getImagesCountByIdCombination: function getImagesCountByIdCombination(id_combination) {
       var combinationQty = 0;
@@ -681,7 +1021,7 @@ function _asyncToGenerator(fn) {
     displayPrice: function displayPrice(price) {
       var qty = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var unit = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-      return "".concat((qty ? price / 100 * qty : price / 100).toFixed(2)).concat(unit ? ' zł' : '');
+      return "".concat((qty ? price / 100 * qty : price / 100).toFixed(2)).concat(unit ? " zł" : "");
     },
     setSelectedCombination: function setSelectedCombination() {
       var combination = this.findCombination(this.attributes);
@@ -714,22 +1054,22 @@ function _asyncToGenerator(fn) {
       return default_combination.attributes;
     },
     submitOrder: function submitOrder(e) {
-      var _this9 = this;
+      var _this7 = this;
 
       var formData = new FormData();
-      formData.append('firstname', this.fields.firstname);
-      formData.append('lastname', this.fields.lastname);
-      formData.append('email', this.fields.email);
-      formData.append('phone_number', this.fields.phone_number);
-      formData.append('cgv', this.fields.cgv);
-      formData.append('newsletter', this.fields.newsletter);
-      formData.append('remember_token', token.content);
-      formData.append('payment_id', this.fields.payment_id);
-      formData.append('street', this.fields.street);
-      formData.append('home_number', this.fields.home_number);
-      formData.append('flat_number', this.fields.flat_number);
-      formData.append('city', this.fields.city);
-      formData.append('postcode', this.fields.postcode);
+      formData.append("firstname", this.fields.firstname);
+      formData.append("lastname", this.fields.lastname);
+      formData.append("email", this.fields.email);
+      formData.append("phone_number", this.fields.phone_number);
+      formData.append("cgv", this.fields.cgv);
+      formData.append("newsletter", this.fields.newsletter);
+      formData.append("remember_token", token.content);
+      formData.append("payment_id", this.fields.payment_id);
+      formData.append("street", this.fields.street);
+      formData.append("home_number", this.fields.home_number);
+      formData.append("flat_number", this.fields.flat_number);
+      formData.append("city", this.fields.city);
+      formData.append("postcode", this.fields.postcode);
       this.fields.images.map(function (image, key) {
         // formData.append(`image[${key}]`, image.file);
         formData.append("image[".concat(key, "]"), image.name);
@@ -740,15 +1080,14 @@ function _asyncToGenerator(fn) {
       if (!this.isSending) {
         this.isSending = true;
         axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/api/order/new", formData).then(function (resp) {
-          _this9.isSending = false;
+          _this7.isSending = false;
 
-          _this9.$router.push("/potwierdzenie/".concat(resp.data.token));
+          _this7.$router.push("/potwierdzenie/".concat(resp.data.token));
         }).catch(function (err) {
-          console.log(err);
-          _this9.isSending = false;
+          _this7.isSending = false;
 
           if (err.response.status == 422) {
-            _this9.errors = err.response.data.errors;
+            _this7.errors = err.response.data.errors;
           }
         });
       }
@@ -795,27 +1134,53 @@ var render = function() {
             [
               _c("h3", { staticClass: "heading-small" }, [
                 _vm._v(
-                  "\n\t\t\t\t\t\t\t1. Wybierz zdjęcia, rozmiar oraz rodzaj papieru (" +
+                  "\n          1. Wybierz zdjęcia, rozmiar oraz rodzaj papieru (" +
                     _vm._s(_vm.fields.images.length) +
-                    ")\n\t\t\t\t\t\t"
+                    ")\n        "
                 )
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "image-select" }, [
-                _c("span", { staticClass: "image-select__text" }, [
-                  _vm._v("Przeciągnij i upuść zdjęcia")
-                ]),
-                _vm._v(" "),
-                _c("input", {
-                  staticClass: "form-images-control",
-                  attrs: {
-                    type: "file",
-                    accept: "image/x-png,image/png,image/jpeg,image/jpg",
-                    multiple: ""
-                  },
-                  on: { change: _vm.addImage }
-                })
-              ]),
+              _c(
+                "div",
+                { staticClass: "image-select" },
+                [
+                  _c("transition", { attrs: { name: "fade" } }, [
+                    _vm.pending
+                      ? _c("div", { staticClass: "image-select__loader" }, [
+                          _c("h2", [_vm._v("Proszę czekać..")]),
+                          _vm._v(" "),
+                          _c("p", { staticClass: "lead" }, [
+                            _vm._v("Trwa wysyłanie plików")
+                          ]),
+                          _vm._v(" "),
+                          _c("p", { staticClass: "lead" }, [
+                            _vm._v(
+                              _vm._s(_vm.totalUploaded) +
+                                " / " +
+                                _vm._s(_vm.totalToUpload)
+                            )
+                          ])
+                        ])
+                      : _vm._e()
+                  ]),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "image-select__text" }, [
+                    _vm._v("Przeciągnij i upuść zdjęcia")
+                  ]),
+                  _vm._v(" "),
+                  _c("input", {
+                    staticClass: "form-images-control",
+                    attrs: {
+                      type: "file",
+                      accept:
+                        "image/x-png,image/png,image/jpeg,image/jpg,image/heic",
+                      multiple: ""
+                    },
+                    on: { change: _vm.addImages }
+                  })
+                ],
+                1
+              ),
               _vm._v(" "),
               _c("transition", { attrs: { name: "fade" } }, [
                 _vm.errors.image
@@ -856,58 +1221,6 @@ var render = function() {
                               class: { selected: image.selected }
                             },
                             [
-                              _c("transition", { attrs: { name: "fade" } }, [
-                                !image.name
-                                  ? _c("div", { staticClass: "image-loader" }, [
-                                      _c(
-                                        "svg",
-                                        {
-                                          staticClass: "lds-infinity",
-                                          staticStyle: { background: "none" },
-                                          attrs: {
-                                            width: "100",
-                                            height: "100",
-                                            xmlns: "http://www.w3.org/2000/svg",
-                                            viewBox: "0 0 100 100",
-                                            preserveAspectRatio: "xMidYMid"
-                                          }
-                                        },
-                                        [
-                                          _c(
-                                            "path",
-                                            {
-                                              attrs: {
-                                                fill: "none",
-                                                d:
-                                                  "M24.3,30C11.4,30,5,43.3,5,50s6.4,20,19.3,20c19.3,0,32.1-40,51.4-40 C88.6,30,95,43.3,95,50s-6.4,20-19.3,20C56.4,70,43.6,30,24.3,30z",
-                                                stroke: "#000000",
-                                                "stroke-width": "2",
-                                                "stroke-dasharray":
-                                                  "2.5658892822265624 2.5658892822265624"
-                                              }
-                                            },
-                                            [
-                                              _c("animate", {
-                                                attrs: {
-                                                  attributeName:
-                                                    "stroke-dashoffset",
-                                                  calcMode: "linear",
-                                                  values:
-                                                    "0;256.58892822265625",
-                                                  keyTimes: "0;1",
-                                                  dur: "6.7",
-                                                  begin: "0s",
-                                                  repeatCount: "indefinite"
-                                                }
-                                              })
-                                            ]
-                                          )
-                                        ]
-                                      )
-                                    ])
-                                  : _vm._e()
-                              ]),
-                              _vm._v(" "),
                               _c(
                                 "div",
                                 {
@@ -1011,9 +1324,10 @@ var render = function() {
                                               {
                                                 name: "model",
                                                 rawName: "v-model.lazy",
-                                                value: image.attributes[k],
+                                                value:
+                                                  image.attributes[option.id],
                                                 expression:
-                                                  "image.attributes[k]",
+                                                  "image.attributes[option.id]",
                                                 modifiers: { lazy: true }
                                               }
                                             ],
@@ -1039,7 +1353,7 @@ var render = function() {
                                                     })
                                                   _vm.$set(
                                                     image.attributes,
-                                                    k,
+                                                    option.id,
                                                     $event.target.multiple
                                                       ? $$selectedVal
                                                       : $$selectedVal[0]
@@ -1152,9 +1466,14 @@ var render = function() {
                               !image.error
                                 ? _c("p", { staticClass: "image-price" }, [
                                     _vm._v(
-                                      _vm._s(
-                                        _vm.displayPrice(image.price, image.qty)
-                                      )
+                                      "\n                " +
+                                        _vm._s(
+                                          _vm.displayPrice(
+                                            image.price,
+                                            image.qty
+                                          )
+                                        ) +
+                                        "\n              "
                                     )
                                   ])
                                 : _vm._e(),
@@ -1167,8 +1486,7 @@ var render = function() {
                                     }
                                   })
                                 : _vm._e()
-                            ],
-                            1
+                            ]
                           )
                         ]
                       )
@@ -1288,8 +1606,9 @@ var render = function() {
                                             {
                                               name: "model",
                                               rawName: "v-model",
-                                              value: _vm.attributes[k],
-                                              expression: "attributes[k]"
+                                              value: _vm.attributes[option.id],
+                                              expression:
+                                                "attributes[option.id]"
                                             }
                                           ],
                                           staticClass:
@@ -1316,7 +1635,7 @@ var render = function() {
                                                 })
                                               _vm.$set(
                                                 _vm.attributes,
-                                                k,
+                                                option.id,
                                                 $event.target.multiple
                                                   ? $$selectedVal
                                                   : $$selectedVal[0]
@@ -1355,7 +1674,11 @@ var render = function() {
                                       }
                                     }
                                   },
-                                  [_vm._v("Zastosuj do zaznaczonych")]
+                                  [
+                                    _vm._v(
+                                      "\n                    Zastosuj do zaznaczonych\n                  "
+                                    )
+                                  ]
                                 )
                               ])
                             ],
@@ -1365,7 +1688,11 @@ var render = function() {
                           _c("transition", { attrs: { name: "fade" } }, [
                             _vm.toolbarError
                               ? _c("p", { staticClass: "lead image-alert" }, [
-                                  _vm._v(_vm._s(_vm.toolbarError))
+                                  _vm._v(
+                                    "\n                  " +
+                                      _vm._s(_vm.toolbarError) +
+                                      "\n                "
+                                  )
                                 ])
                               : _vm._e()
                           ])
@@ -1396,7 +1723,7 @@ var render = function() {
                           _c("tr", [
                             _c("td", [_vm._v("Ilość zdjęć")]),
                             _vm._v(" "),
-                            _c("td", [_vm._v(" " + _vm._s(_vm.getImagesQty()))])
+                            _c("td", [_vm._v(_vm._s(_vm.getImagesQty()))])
                           ]),
                           _vm._v(" "),
                           _c("tr", [
@@ -1441,9 +1768,7 @@ var render = function() {
           _vm._v(" "),
           _c("fieldset", { staticClass: "address mt-5" }, [
             _c("h3", { staticClass: "heading-small" }, [
-              _vm._v(
-                "\n\t\t\t\t\t\t\t2. Uzupłnij formularz adresowy\n\t\t\t\t\t\t"
-              )
+              _vm._v("2. Uzupłnij formularz adresowy")
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "row" }, [
@@ -1492,9 +1817,9 @@ var render = function() {
                         { staticClass: "invalid-feedback d-block" },
                         [
                           _vm._v(
-                            "\n\t\t\t\t\t\t\t\t\t\t" +
+                            "\n                " +
                               _vm._s(error) +
-                              "\n\t\t\t\t\t\t\t\t\t"
+                              "\n              "
                           )
                         ]
                       )
@@ -1550,9 +1875,9 @@ var render = function() {
                         { staticClass: "invalid-feedback d-block" },
                         [
                           _vm._v(
-                            "\n\t\t\t\t\t\t\t\t\t\t" +
+                            "\n                " +
                               _vm._s(error) +
-                              "\n\t\t\t\t\t\t\t\t\t"
+                              "\n              "
                           )
                         ]
                       )
@@ -1608,9 +1933,9 @@ var render = function() {
                         { staticClass: "invalid-feedback d-block" },
                         [
                           _vm._v(
-                            "\n\t\t\t\t\t\t\t\t\t\t" +
+                            "\n                " +
                               _vm._s(error) +
-                              "\n\t\t\t\t\t\t\t\t\t"
+                              "\n              "
                           )
                         ]
                       )
@@ -1670,9 +1995,9 @@ var render = function() {
                         { staticClass: "invalid-feedback d-block" },
                         [
                           _vm._v(
-                            "\n\t\t\t\t\t\t\t\t\t\t" +
+                            "\n                " +
                               _vm._s(error) +
-                              "\n\t\t\t\t\t\t\t\t\t"
+                              "\n              "
                           )
                         ]
                       )
@@ -1728,9 +2053,9 @@ var render = function() {
                         { staticClass: "invalid-feedback d-block" },
                         [
                           _vm._v(
-                            "\n\t\t\t\t\t\t\t\t\t\t" +
+                            "\n                " +
                               _vm._s(error) +
-                              "\n\t\t\t\t\t\t\t\t\t"
+                              "\n              "
                           )
                         ]
                       )
@@ -1792,9 +2117,9 @@ var render = function() {
                             { staticClass: "invalid-feedback d-block" },
                             [
                               _vm._v(
-                                "\n\t\t\t\t\t\t\t\t\t\t\t\t" +
+                                "\n                    " +
                                   _vm._s(error) +
-                                  "\n\t\t\t\t\t\t\t\t\t\t\t"
+                                  "\n                  "
                               )
                             ]
                           )
@@ -1853,9 +2178,9 @@ var render = function() {
                             { staticClass: "invalid-feedback d-block" },
                             [
                               _vm._v(
-                                "\n\t\t\t\t\t\t\t\t\t\t\t\t" +
+                                "\n                    " +
                                   _vm._s(error) +
-                                  "\n\t\t\t\t\t\t\t\t\t\t\t"
+                                  "\n                  "
                               )
                             ]
                           )
@@ -1915,9 +2240,9 @@ var render = function() {
                         { staticClass: "invalid-feedback d-block" },
                         [
                           _vm._v(
-                            "\n\t\t\t\t\t\t\t\t\t" +
+                            "\n                " +
                               _vm._s(error) +
-                              "\n\t\t\t\t\t\t\t\t"
+                              "\n              "
                           )
                         ]
                       )
@@ -1971,9 +2296,9 @@ var render = function() {
                         { staticClass: "invalid-feedback d-block" },
                         [
                           _vm._v(
-                            "\n\t\t\t\t\t\t\t\t\t" +
+                            "\n                " +
                               _vm._s(error) +
-                              "\n\t\t\t\t\t\t\t\t"
+                              "\n              "
                           )
                         ]
                       )
@@ -2103,9 +2428,7 @@ var render = function() {
             { staticClass: "payments mt-5" },
             [
               _c("h3", { staticClass: "heading-small" }, [
-                _vm._v(
-                  "\n\t\t\t\t\t\t\t3. Wybierz metodę płatności\n\t\t\t\t\t\t"
-                )
+                _vm._v("3. Wybierz metodę płatności")
               ]),
               _vm._v(" "),
               _c("transition", { attrs: { name: "fade" } }, [
@@ -2249,7 +2572,7 @@ var render = function() {
                   class: { sending: _vm.isSending },
                   attrs: { type: "submit", disabled: _vm.isSending }
                 },
-                [_vm._v("\n\t\t\t\t\t\t\tZłóż zamówienie\n\t\t\t\t\t\t")]
+                [_vm._v("\n          Złóż zamówienie\n        ")]
               )
             ],
             1
@@ -2278,21 +2601,21 @@ var staticRenderFns = [
       _c("p", { staticClass: "lead" }, [
         _c("sup", [_vm._v("*")]),
         _vm._v(
-          "Bez ramki - jeśli proporcje Twojego zdjęcia są inne niż proporcje odbitki, część obrazu zostanie przycięta."
+          "Bez ramki - jeśli proporcje Twojego zdjęcia są inne niż\n              proporcje odbitki, część obrazu zostanie przycięta.\n            "
         )
       ]),
       _vm._v(" "),
       _c("p", { staticClass: "lead" }, [
         _c("sup", [_vm._v("*")]),
         _vm._v(
-          "Z ramką - Twoje zdjęcie zostanie skadrowane jak w opcji Bez ramki, przy czym wokół zostanie dodane białe obramowanie o szerokości ok. 4 mm."
+          "Z ramką - Twoje zdjęcie zostanie skadrowane jak w opcji Bez\n              ramki, przy czym wokół zostanie dodane białe obramowanie o szerokości ok.\n              4 mm.\n            "
         )
       ]),
       _vm._v(" "),
       _c("p", { staticClass: "lead" }, [
         _c("sup", [_vm._v("*")]),
         _vm._v(
-          "Pełny kadr - jeśli proporcje Twojego zdjęcia są inne niż proporcje odbitki, z dwóch stron pojawią się białe paski."
+          "Pełny kadr - jeśli proporcje Twojego zdjęcia są inne niż\n              proporcje odbitki, z dwóch stron pojawią się białe paski.\n            "
         )
       ]),
       _vm._v(" "),
@@ -2301,14 +2624,14 @@ var staticRenderFns = [
       _c("p", { staticClass: "lead" }, [
         _c("sup", [_vm._v("*")]),
         _vm._v(
-          "Matowy -  papier matowy charakteryzuje się chropowatą, nieregularną strukturą, która idealnie niweluje odbicia światła. Papier matowy jest odporny na zarysowania i nie pozostają na nim odciski palców. Gramatura 215 g/m2."
+          "Matowy - papier matowy charakteryzuje się chropowatą,\n              nieregularną strukturą, która idealnie niweluje odbicia światła. Papier\n              matowy jest odporny na zarysowania i nie pozostają na nim odciski palców.\n              Gramatura 215 g/m2.\n            "
         )
       ]),
       _vm._v(" "),
       _c("p", { staticClass: "lead" }, [
         _c("sup", [_vm._v("*")]),
         _vm._v(
-          "Błyszczący - papier błyszczący wyróżnia charakterystyczna dla niego powierzchnia z połyskiem, która sprawia, że barwy zdjęcia wydają się żywe i czyste. Papier ten posiada nieznacznie większe maksymalne nasycenie barw i głębokość czerni. Gramatura 215 g/m2."
+          "Błyszczący - papier błyszczący wyróżnia charakterystyczna dla\n              niego powierzchnia z połyskiem, która sprawia, że barwy zdjęcia wydają się\n              żywe i czyste. Papier ten posiada nieznacznie większe maksymalne nasycenie\n              barw i głębokość czerni. Gramatura 215 g/m2.\n            "
         )
       ])
     ])

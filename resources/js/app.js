@@ -7,6 +7,7 @@ import Meta from 'vue-meta';
 import VueSilentbox from 'vue-silentbox';
 import NProgress from 'nprogress';
 import VueLazyload from 'vue-lazyload';
+import Notifications from 'vue-notification'
 
 // import {Workbox} from 'workbox-window';
 
@@ -20,6 +21,7 @@ Vue.use(VueMasonryPlugin);
 Vue.use(Meta);
 Vue.use(VueSilentbox);
 Vue.use(VueLazyload);
+Vue.use(Notifications)
 
 Vue.config.productionTip = false
 

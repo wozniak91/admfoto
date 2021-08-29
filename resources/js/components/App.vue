@@ -1,6 +1,7 @@
 <template>
   <div class="app">
     <HeaderComponent/>
+    <notifications group="notify" />
     <transition name="fade" mode="out-in">
       <keep-alive>
         <router-view/>
