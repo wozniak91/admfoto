@@ -758,7 +758,7 @@ function _asyncToGenerator(fn) {
                     _context2.next = 3;
                     return heic2any__WEBPACK_IMPORTED_MODULE_3___default()({
                       blob: blob,
-                      toType: "image/jpeg",
+                      toType: "image/png",
                       quality: 1
                     });
 
@@ -786,31 +786,28 @@ function _asyncToGenerator(fn) {
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(file) {
         var _this3 = this;
 
-        var fileName, blob, _fileName, formData, image;
-
+        var blob, fileName, formData, image;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                fileName = file.name.toLowerCase();
-
-                if (!fileName.includes('heic')) {
-                  _context3.next = 7;
+                if (!(file.name.includes('heic') || file.name.includes('HEIC'))) {
+                  _context3.next = 6;
                   break;
                 }
 
-                _context3.next = 4;
+                _context3.next = 3;
                 return this.convert(file);
 
-              case 4:
+              case 3:
                 blob = _context3.sent;
-                _fileName = new Date().getTime() + ".jpeg";
-                file = new File([blob], _fileName, {
-                  type: "image/jpeg",
+                fileName = file.name.split('.').slice(0, -1).join('.') + ".png";
+                file = new File([blob], fileName, {
+                  type: "image/png",
                   lastModified: Date.now()
                 });
 
-              case 7:
+              case 6:
                 formData = new FormData();
                 formData.append("image", file);
                 image = {
@@ -823,12 +820,12 @@ function _asyncToGenerator(fn) {
                   file: file,
                   errors: false
                 };
-                _context3.next = 12;
+                _context3.next = 11;
                 return this.readFile(file);
 
-              case 12:
+              case 11:
                 image.dataImage = _context3.sent;
-                _context3.next = 15;
+                _context3.next = 14;
                 return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/api/order/image", formData).then(function (resp) {
                   image.name = resp.data;
                   _this3.totalUploaded += 1;
@@ -837,16 +834,18 @@ function _asyncToGenerator(fn) {
 
                   _this3.checkCombinations();
                 }).catch(function (err) {
+                  console.log(err.response);
+
                   _this3.$notify({
                     group: "notify",
                     type: "error",
                     title: file.name,
                     duration: 40000,
-                    text: err.response.data.message
+                    text: err.response.data.errors.image.join('.')
                   });
                 });
 
-              case 15:
+              case 14:
               case "end":
                 return _context3.stop();
             }

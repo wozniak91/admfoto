@@ -555,7 +555,7 @@
 
 <script>
 import axios from "axios";
-import { delay, isEqual } from "lodash";
+import { delay, isEqual, replace } from "lodash";
 import heic2any from "heic2any";
 
 export default {
@@ -669,9 +669,9 @@ export default {
 
           const conversionResult = await heic2any({
             blob,
-            toType:"image/jpeg",
+            toType:"image/png",
             quality: 1
-          })
+          });
 
           resolve(conversionResult)
         });
@@ -680,17 +680,16 @@ export default {
     },
 
     async uploadImage(file) {
-
-      let fileName = file.name.toLowerCase();
-
-      if(fileName.includes('heic')) {
+      if(file.name.includes('heic') || file.name.includes('HEIC')) {
         const blob = await this.convert(file);
-        let fileName = new Date().getTime() + ".jpeg";
+        let fileName = file.name.split('.').slice(0, -1).join('.') + ".png";
         file = new File([blob], fileName, {
-          type: "image/jpeg",
+          type: "image/png",
           lastModified: Date.now()
         });
       }
+
+      
 
       const formData = new FormData();
       formData.append(`image`, file);
@@ -713,13 +712,13 @@ export default {
           this.fields.images.push(image);
           this.checkCombinations();
         }).catch((err) => {
-
+          console.log(err.response)
           this.$notify({
             group: "notify",
             type: "error",
             title: file.name,
             duration: 40000,
-            text: err.response.data.message,
+            text: err.response.data.errors.image.join('.'),
           });
         });
     },
