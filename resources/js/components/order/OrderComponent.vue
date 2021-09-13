@@ -13,9 +13,10 @@
 
           <div class="image-select">
             <transition name="fade">
-              <div class="image-select__loader" v-if="pending">
+              <div class="image-select__loader" v-if="pending || converting">
                 <h2>Proszę czekać..</h2>
-                <p class="lead">Trwa wysyłanie plików</p>
+                  <p class="lead" v-if="pending && !converting">Trwa wysyłanie zdjęcia</p>
+                  <p class="lead" v-if="pending && converting">Trwa konwersja zdjęcia</p>
                 <p class="lead">{{ totalUploaded }} / {{ totalToUpload }}</p>
               </div>
             </transition>
@@ -474,7 +475,7 @@
         </div>
         <fieldset class="payments mt-5">
           <h3 class="heading-small">3. Wybierz metodę płatności</h3>
-          <transition name="fade">
+          <!-- <transition name="fade">
             <div
               class="form-group d-flex align-items-center"
               v-if="displayPrice(getTotalPrice(), false, false) <= 1000"
@@ -490,8 +491,20 @@
               <span class="form-radio"></span>
               <label for="payment_1">W punkcie sprzedaży</label>
             </div>
-          </transition>
+          </transition> -->
           <div class="form-group d-flex align-items-center">
+              <input
+                type="radio"
+                class="form-control-radio"
+                :value="1"
+                name="payment"
+                id="payment_1"
+                v-model="fields.payment_id"
+              />
+              <span class="form-radio"></span>
+              <label for="payment_1">W punkcie sprzedaży (możliwość płatności gotówka lub kartą)</label>
+            </div>
+          <!-- <div class="form-group d-flex align-items-center">
             <input
               type="radio"
               class="form-control-radio"
@@ -502,7 +515,7 @@
             />
             <span class="form-radio"></span>
             <label for="payment_2">Przedpłata na konto</label>
-          </div>
+          </div> -->
         </fieldset>
 
         <div class="d-flex justify-content-end mb-5 mt-3">
@@ -562,6 +575,7 @@ export default {
   data() {
     return {
       pending: false,
+      converting: false,
       totalToUpload: 0,
       totalUploaded: 0,
       errors: false,
@@ -681,12 +695,14 @@ export default {
 
     async uploadImage(file) {
       if(file.name.includes('heic') || file.name.includes('HEIC')) {
+        this.converting = true;
         const blob = await this.convert(file);
         let fileName = file.name.split('.').slice(0, -1).join('.') + ".png";
         file = new File([blob], fileName, {
           type: "image/png",
           lastModified: Date.now()
         });
+        this.converting = false;
       }
 
       

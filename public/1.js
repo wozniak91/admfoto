@@ -608,6 +608,19 @@ function _asyncToGenerator(fn) {
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -617,6 +630,7 @@ function _asyncToGenerator(fn) {
   data: function data() {
     return {
       pending: false,
+      converting: false,
       totalToUpload: 0,
       totalUploaded: 0,
       errors: false,
@@ -792,22 +806,24 @@ function _asyncToGenerator(fn) {
             switch (_context3.prev = _context3.next) {
               case 0:
                 if (!(file.name.includes('heic') || file.name.includes('HEIC'))) {
-                  _context3.next = 6;
+                  _context3.next = 8;
                   break;
                 }
 
-                _context3.next = 3;
+                this.converting = true;
+                _context3.next = 4;
                 return this.convert(file);
 
-              case 3:
+              case 4:
                 blob = _context3.sent;
                 fileName = file.name.split('.').slice(0, -1).join('.') + ".png";
                 file = new File([blob], fileName, {
                   type: "image/png",
                   lastModified: Date.now()
                 });
+                this.converting = false;
 
-              case 6:
+              case 8:
                 formData = new FormData();
                 formData.append("image", file);
                 image = {
@@ -820,12 +836,12 @@ function _asyncToGenerator(fn) {
                   file: file,
                   errors: false
                 };
-                _context3.next = 11;
+                _context3.next = 13;
                 return this.readFile(file);
 
-              case 11:
+              case 13:
                 image.dataImage = _context3.sent;
-                _context3.next = 14;
+                _context3.next = 16;
                 return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/api/order/image", formData).then(function (resp) {
                   image.name = resp.data;
                   _this3.totalUploaded += 1;
@@ -845,7 +861,7 @@ function _asyncToGenerator(fn) {
                   });
                 });
 
-              case 14:
+              case 16:
               case "end":
                 return _context3.stop();
             }
@@ -1144,13 +1160,21 @@ var render = function() {
                 { staticClass: "image-select" },
                 [
                   _c("transition", { attrs: { name: "fade" } }, [
-                    _vm.pending
+                    _vm.pending || _vm.converting
                       ? _c("div", { staticClass: "image-select__loader" }, [
                           _c("h2", [_vm._v("Proszę czekać..")]),
                           _vm._v(" "),
-                          _c("p", { staticClass: "lead" }, [
-                            _vm._v("Trwa wysyłanie plików")
-                          ]),
+                          _vm.pending && !_vm.converting
+                            ? _c("p", { staticClass: "lead" }, [
+                                _vm._v("Trwa wysyłanie zdjęcia")
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm.pending && _vm.converting
+                            ? _c("p", { staticClass: "lead" }, [
+                                _vm._v("Trwa konwersja zdjęcia")
+                              ])
+                            : _vm._e(),
                           _vm._v(" "),
                           _c("p", { staticClass: "lead" }, [
                             _vm._v(
@@ -2422,92 +2446,43 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          _c(
-            "fieldset",
-            { staticClass: "payments mt-5" },
-            [
-              _c("h3", { staticClass: "heading-small" }, [
-                _vm._v("3. Wybierz metodę płatności")
-              ]),
+          _c("fieldset", { staticClass: "payments mt-5" }, [
+            _c("h3", { staticClass: "heading-small" }, [
+              _vm._v("3. Wybierz metodę płatności")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group d-flex align-items-center" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.fields.payment_id,
+                    expression: "fields.payment_id"
+                  }
+                ],
+                staticClass: "form-control-radio",
+                attrs: { type: "radio", name: "payment", id: "payment_1" },
+                domProps: {
+                  value: 1,
+                  checked: _vm._q(_vm.fields.payment_id, 1)
+                },
+                on: {
+                  change: function($event) {
+                    _vm.$set(_vm.fields, "payment_id", 1)
+                  }
+                }
+              }),
               _vm._v(" "),
-              _c("transition", { attrs: { name: "fade" } }, [
-                _vm.displayPrice(_vm.getTotalPrice(), false, false) <= 1000
-                  ? _c(
-                      "div",
-                      { staticClass: "form-group d-flex align-items-center" },
-                      [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.fields.payment_id,
-                              expression: "fields.payment_id"
-                            }
-                          ],
-                          staticClass: "form-control-radio",
-                          attrs: {
-                            type: "radio",
-                            name: "payment",
-                            id: "payment_1"
-                          },
-                          domProps: {
-                            value: 1,
-                            checked: _vm._q(_vm.fields.payment_id, 1)
-                          },
-                          on: {
-                            change: function($event) {
-                              _vm.$set(_vm.fields, "payment_id", 1)
-                            }
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("span", { staticClass: "form-radio" }),
-                        _vm._v(" "),
-                        _c("label", { attrs: { for: "payment_1" } }, [
-                          _vm._v("W punkcie sprzedaży")
-                        ])
-                      ]
-                    )
-                  : _vm._e()
-              ]),
+              _c("span", { staticClass: "form-radio" }),
               _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "form-group d-flex align-items-center" },
-                [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.fields.payment_id,
-                        expression: "fields.payment_id"
-                      }
-                    ],
-                    staticClass: "form-control-radio",
-                    attrs: { type: "radio", name: "payment", id: "payment_2" },
-                    domProps: {
-                      value: 2,
-                      checked: _vm._q(_vm.fields.payment_id, 2)
-                    },
-                    on: {
-                      change: function($event) {
-                        _vm.$set(_vm.fields, "payment_id", 2)
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "form-radio" }),
-                  _vm._v(" "),
-                  _c("label", { attrs: { for: "payment_2" } }, [
-                    _vm._v("Przedpłata na konto")
-                  ])
-                ]
-              )
-            ],
-            1
-          ),
+              _c("label", { attrs: { for: "payment_1" } }, [
+                _vm._v(
+                  "W punkcie sprzedaży (możliwość płatności gotówka lub kartą)"
+                )
+              ])
+            ])
+          ]),
           _vm._v(" "),
           _c(
             "div",

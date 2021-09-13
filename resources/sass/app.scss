@@ -1,6 +1,6 @@
 
 // Fonts
-@import 'fontello';
+// @import 'fontello';
 
   /* latin-ext */
   @font-face {
@@ -94,7 +94,7 @@ $card-border-radius: 0;
 @import '~bootstrap/scss/_forms';
 @import '~bootstrap/scss/_card';
 @import '~bootstrap/scss/_alert';
-@import '~aos/src/sass/aos';
+// @import '~aos/src/sass/aos';
 
 p {
 	line-height: 1.5;
@@ -1047,7 +1047,8 @@ img[lazy="loaded"] {
 	}
 
 	&-icon {
-		font-size: 1.1rem;
+		// font-size: 1.1rem;
+		width: 1.1rem;
 	}
 }
 .toolbar {
