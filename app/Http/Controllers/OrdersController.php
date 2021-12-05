@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
 
 use App\Order;
 use App\Image;
@@ -233,10 +234,28 @@ class OrdersController extends Controller
         $order_id = $request->input('order_id');
         $headers = ["Content-Type"=>"application/zip"];
         $fileName = $order_id.".zip";
-        
-        Zipper::make(public_path("/storage/images/orders/".$order_id.'.zip'))
-                ->add(public_path()."/storage/images/orders/".$order_id.'/')->close();
 
-        return response()->download(public_path("/storage/images/orders/".$fileName), $fileName, $headers);
+        $order = Order::findOrFail($order_id);
+        $tmp_dir = '/tmp/order_'.$order_id;
+        Storage::deleteDirectory($tmp_dir);
+
+        if(Storage::makeDirectory($tmp_dir)) {
+
+            foreach($order->images as $key => $image) {
+                Storage::copy(
+                    '/public/images/orders/'.$image->order_id.'/'. $image->image_path,
+                    '/tmp/order_'.$order_id.'/'.$image->qty.'_'.$image->getCombinationUrl().'/'.$key.'_'.$image->name
+                );
+            }
+        }
+
+        $zip_path = storage_path('app/tmp');
+        
+        Zipper::make(storage_path('app/tmp').'/'.$fileName)
+                ->add(storage_path('app/tmp').'/order_'.$order_id)->close();
+
+        Storage::deleteDirectory($tmp_dir);
+
+        return response()->download(storage_path('app/tmp').'/'.$fileName, $fileName, $headers);
     }
 }

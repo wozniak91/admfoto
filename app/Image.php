@@ -35,7 +35,6 @@ class Image extends Model
      */
     public function getImagePathAttribute()
     {
-
         $combination_url = [];
         foreach ($this->combination->options as $option) {
             $name = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $option->value);
@@ -46,6 +45,23 @@ class Image extends Model
         return "{$combination_url}/{$this->name}";
     }
 
+    /**
+     * Get the image path attribute.
+     *
+     * @return string
+     */
+    public function getCombinationUrl()
+    {
+        $combination_url = [];
+        foreach ($this->combination->options as $option) {
+            $name = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $option->value);
+            $combination_url[] = str_replace(' ', '_', $name);
+        }
+        $combination_url = join("-", $combination_url);
+
+        return $combination_url;
+    }
+
     public function saveAndStore()
     {
         return $this->save() && $this->store();
@@ -53,8 +69,11 @@ class Image extends Model
 
     public function store()
     {
+        if ($this->exists()) {
+            return true;
+        }
         return Storage::copy(
-            '/tmp/'.$this->name, 
+            '/tmp/'.$this->name,
             '/public/images/orders/'.$this->order_id.'/'. $this->image_path
         ) && Storage::delete('/tmp/'.$this->name);
     }
